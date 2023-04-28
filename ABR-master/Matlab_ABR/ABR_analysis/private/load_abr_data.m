@@ -28,7 +28,9 @@ data.y=NaN*ones(10,num);
 data.y_forfig=NaN*ones(10,num);
 data.amp_null=NaN*ones(1,num);
 
-date=abr_Stimuli.dir(4:13);
+% date=abr_Stimuli.dir(4:13);
+
+
 ABRmag=NaN*ones(num,4);
 line_width=1;
 
@@ -43,9 +45,9 @@ freqs=NaN*ones(1,num);
 attn=NaN*ones(1,num);
 %HG ADDED 2/26/20
 if viewraw == 0 %AC corrected data
-    hhh=dir(sprintf('a%04d*.m',pic(1)));
+    hhh=dir(sprintf('a%04d*.mat',pic(1)));
 else %RAW data
-    hhh=dir(sprintf('araw%04d*.m',pic(1)));
+    hhh=dir(sprintf('araw%04d*.mat',pic(1)));
 end
 %Make sure you are looking at a file, NOT ARAW file
 if (contains(hhh.name,'araw') && (viewraw == 0))
@@ -54,12 +56,18 @@ end
 if exist(hhh.name,'file') && ~isempty(hhh)
     for i=1:num
         if viewraw == 0 %AC corrected data
-            fname=dir(sprintf('a%04d*.m',pic(i)));
+            fname=dir(sprintf('a%04d*.mat',pic(i)));
         else %RAW data
-            fname=dir(sprintf('araw%04d*.m',pic(i)));
+            fname=dir(sprintf('araw%04d*.mat',pic(i)));
         end
-        filename=fname.name(1:end-2);
-        eval(['x=' filename ';'])
+        filename=fname.name(1:end-4);
+%         eval(['x=' filename ';'])
+        load(filename,'x');
+        
+        %AS
+        date1=x.General.date; 
+        date=[date1(1:2) date1(4:6) date1(8:11)];
+
         if ~(x.Stimuli.clickYes)
             freqs(1,i)=x.Stimuli.freq_hz;
         else
@@ -152,7 +160,7 @@ freq=round(freqs(1,1)/500)*500; %round to nearest 500 Hz
 abr_time=(0:dt:time_of_bin(length(abr)));
 
 %% Determine SPL of stimuli
-CalibFile  = sprintf('p%04d_calib', str2double(abr_Stimuli.cal_pic));
+CalibFile  = sprintf('p%04d_calib_raw', str2double(abr_Stimuli.cal_pic));
 command_line = sprintf('%s%s%c','[xcal]=',CalibFile,';');
 try
     eval(command_line); % JB: If you get an error here, make sure your calib file 

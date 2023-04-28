@@ -20,10 +20,10 @@ cd(ExpDir);
 abr=[]; 
 freqs=NaN*ones(1,num); 
 attn=NaN*ones(1,num);
-hhh=dir(sprintf('a%04d*.m',pic(1)));
+hhh=dir(sprintf('a%04d*.mat',pic(1)));
 if exist(hhh.name,'file') && ~isempty(hhh)
     for i=1:num
-        fname=dir(sprintf('a%04d*.m',pic(i)));
+        fname=dir(sprintf('a%04d*.mat',pic(i)));
         filename=fname.name(1:end-2);
         eval(['x=' filename ';'])
         %HG edited 10/24/19 -- all click freqs should be NaN, not 1000Hz
@@ -59,7 +59,7 @@ if exist(hhh.name,'file') && ~isempty(hhh)
     end
 else %WHEN DOES IT  GO INTO HERE?
     for i=1:num
-        fname=dir(sprintf('p%04d*.m',pic(i)));
+        fname=dir(sprintf('p%04d*.mat',pic(i)));
         filename=fname.name(1:end-2);
         eval(['x=' filename ';'])
         %HG edited 10/24/19 -- all click freqs should be NaN, not 1000Hz
@@ -86,8 +86,8 @@ if exist('invert', 'var')
     end
 end
 
-%date1=x.General.date; date=[date1(1:2) date1(4:6) date1(8:11)];
-date=abr_Stimuli.dir(4:13);
+date1=x.General.date; date=[date1(1:2) date1(4:6) date1(8:11)];
+% date=abr_Stimuli.dir(4:13);
 dt=500/x.Stimuli.RPsamprate_Hz; %sampling period after oversampling
 
 %sort abrs in order of increasing attenuation

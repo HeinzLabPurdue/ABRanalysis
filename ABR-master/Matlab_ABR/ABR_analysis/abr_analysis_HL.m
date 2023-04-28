@@ -255,7 +255,7 @@ elseif strcmp(command_str,'nextPics')
 elseif strcmp(command_str,'directory')
     abr_Stimuli.dir = get_directory;
     %TODO JB: Find inactive freqs and disable inactive freq buttons
-    TEMPdir=dir('*2000.m');
+    TEMPdir=dir('*2000.mat');
     if isempty(TEMPdir)
         set(abr_FIG.push.freq2k,'Enable','off');
     end

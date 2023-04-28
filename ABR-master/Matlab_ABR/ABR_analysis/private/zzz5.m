@@ -3,12 +3,11 @@
 
 function zzz5
 %% Initialize
-global  ThreshTypeCorrCovDist 
+global  ThreshTypeCorrCovDist
 
 ThreshTypeCorrCovDist=1;
 
-load_abr_data; % Updates [abr_Stimuli abr_data_dir	num dt line_width abr freq attn spl date data freq_level abr_time ABRmag invert]
-
+load_abr_data; % Updates [abr_Stimuli abr_data_dir	num dt line_width abr freq attn spl date data freq_level abr_time ABRmag invert]    
 [abr_xx2,delay_of_max]=threshold_calc_old;
 
 % [abr_xx_SP,delay_of_max_SP]=threshold_calc_SDT_SP;

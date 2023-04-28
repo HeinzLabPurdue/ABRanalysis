@@ -69,6 +69,13 @@ for k = 1:length(a_files)
         f = 1; %col 1 is click
         %Assign to data
         waves{r(1),f} = x.AD_Data.AD_Avg_V;
+        %Test if format is old or new
+        if (isa(x.AD_Data.AD_Avg_V, 'double') == 0)
+            waves{r(1),f} = x.AD_Data.AD_Avg_V{1};
+            if (isa(x.AD_Data.AD_Avg_V{1}, 'double') == 0)
+                waves{r(1),f} = x.AD_Data.AD_Avg_V{1}{1};
+            end
+        end
         %Assign to atten
         atten(r(1),f) = round(x.Stimuli.MaxdBSPLCalib - x.Stimuli.atten_dB);
         %Increase counter
@@ -79,6 +86,12 @@ for k = 1:length(a_files)
         f = find(fr == freq);
         %Assign to data
         waves{r(f),f} = x.AD_Data.AD_Avg_V;
+        if (isa(x.AD_Data.AD_Avg_V, 'double') == 0)
+            waves{r(f),f} = x.AD_Data.AD_Avg_V{1};
+            if (isa(x.AD_Data.AD_Avg_V{1}, 'double') == 0)
+                waves{r(f),f} = x.AD_Data.AD_Avg_V{1}{1};
+            end
+        end
         %Assign to atten
         atten(r(f),f) = round(x.Stimuli.MaxdBSPLCalib - x.Stimuli.atten_dB);
         if atten(r(f),f) < 0
@@ -214,8 +227,10 @@ if strcmp(continueButton,'Yes')
        level = round(yyy.Stimuli.MaxdBSPLCalib - yyy.Stimuli.atten_dB);
        if level < 0
            level = -1; %to match convention from earlier
-           r = find(level == new_atten(:,f)); %row index in atten for current freq
-           yyy.AD_Data.AD_Avg_V = ac_data{r(count),f};
+           %JB commented these two lines out 7/25, not sure what they are 
+           %supposed to do but they were causing crashes
+           %r = find(level == new_atten(:,f)); %row index in atten for current freq
+           %yyy.AD_Data.AD_Avg_V = ac_data{r(count),f};
            count = count + 1; %increases counter
        else
            r = find(level == new_atten(:,f)); %row index in atten for current freq

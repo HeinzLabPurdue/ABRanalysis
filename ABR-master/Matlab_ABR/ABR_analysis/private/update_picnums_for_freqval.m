@@ -65,14 +65,14 @@ end
 ExpDir = dataFolderpath;
 cd(ExpDir);
 if freq_val_kHz~=0
-    allfiles=dir(['a*ABR*' num2str(round(freq_val_kHz*1e3)) '*']);
+    allfiles=dir(['a*ABR*' num2str(round(freq_val_kHz*1e3)) '*.mat']);
     if isempty(allfiles)
-        allfiles=dir(['p*ABR*' num2str(round(freq_val_kHz*1e3)) '*']);
+        allfiles=dir(['p*ABR*' num2str(round(freq_val_kHz*1e3)) '*.mat']);
     end
 elseif freq_val_kHz==0
-    allfiles=dir('a*ABR*click*');
+    allfiles=dir('a*ABR*click*.mat');
     if isempty(allfiles)
-        allfiles=dir('p*ABR*click*');
+        allfiles=dir('p*ABR*click*.mat');
     end
 end
 
@@ -81,8 +81,9 @@ ABRpics=nan(1,length(allfiles));
 
 for i=1:length(allfiles)
     filename=allfiles(i).name;
-    eval(['run(''' filename ''');']);
-    eval('x=ans;')
+%     eval(['run(''' filename ''');']);
+%     eval('x=ans;')
+    load(filename,'x');
     if ~isfield(x.Stimuli,'MaxdBSPLCalib')
         allcalfiles=dir('p*calib*');
         calfile=allcalfiles(1).name;

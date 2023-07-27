@@ -16,12 +16,14 @@ axis off; pause(0.5); close(22);
 % end
 
 q_fldr = strcat('Q', num2str(animal));
-if strcmp('pre',regexp(abr_Stimuli.dir,'pre','match')) == 1
-    type = 'pre';
-elseif strcmp('post',regexp(abr_Stimuli.dir,'post','match')) == 1
-    type = 'post';
-end
-ChinDir = strcat(abr_out_dir, q_fldr, filesep, type, filesep);
+% if strcmp('pre',regexp(abr_Stimuli.dir,'pre','match')) == 1
+%     type = 'pre';
+% elseif strcmp('post',regexp(abr_Stimuli.dir,'post','match')) == 1
+%     type = 'post';
+% else
+%     type = 'none';
+% end
+ChinDir = [abr_out_dir,'/', q_fldr];
 
 if ~isdir(ChinDir)
     mkdir(ChinDir);
@@ -29,13 +31,15 @@ end
 cd(ChinDir)
 
 x = dir;
-% for i = 1:length(x)
-%     if (~contains(x(i).name,'.'))&&(~contains(x(i).name,'.DS_Store','IgnoreCase',true))
-%         fldr = x(i).name;
-%     end
-% end
-% currChinDir = strcat(ChinDir, fldr);
-% cd(currChinDir)
+for i = 1:length(x)
+    if (~contains(x(i).name,'.'))&&(~contains(x(i).name,'.DS_Store','IgnoreCase',true))
+        fldr = x(i).name;
+    else
+        fldr = '';
+    end
+end
+currChinDir = strcat(ChinDir, fldr);
+cd(currChinDir)
 
 if ~isempty(filename)
     %filename2 = char(strcat(curChinDir,filename,'.mat'));
@@ -116,6 +120,16 @@ if ~isempty(filename)
         abrs.x = [freq2' spl' data.x'];
         abrs.y = [freq2' spl' data.y'];
         abrs.waves = [freq2' spl' abr'];
+        
+        if exist(strcat(filename2, '.mat'),'file')
+            filename3 = strcat(filename2, '_old');
+            file_num = 2;
+            while exist(strcat(filename3, '.mat'),'file')
+                filename3 = strcat(filename3, num2str(file_num));
+                file_num = file_num + 1;
+            end
+            copyfile(strcat(filename2, '.mat'), strcat(filename3, '.mat'));
+        end
         
         %HG ADDED 2/11/20
         abrs.AR_marker = AR_marker;

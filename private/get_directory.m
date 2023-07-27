@@ -12,12 +12,17 @@ set(han.viewraw,'Value',0);
 %d = dir(abr_data_dir);
 cd(abr_data_dir)
 folderNum = 1; %counter for FOLDER array, put this where???
-answer = questdlg('Are your data folders correctly formatted?',...
-                'Data Format', 'Yes', 'No', 'I dont know');
+
+% Doing away with this
+% answer = questdlg('Are your data folders correctly formatted?',...
+%                 'Data Format', 'Yes', 'No', 'I dont know');
+
+%assert No for now, clean up asap
+answer = 'No';
             
     if contains(answer, 'Yes')
         formatCorrect = true;
-        set(abr_FIG.push.peaks,'Enable','on');
+%         set(abr_FIG.push.peaks,'Enable','on');
         Qfolders = dir('Q*');
         Qfolders_pwd = pwd;
         for q = 1:length(Qfolders)
@@ -68,7 +73,7 @@ answer = questdlg('Are your data folders correctly formatted?',...
         end
     else
         formatCorrect = false;
-        set(abr_FIG.push.peaks,'Enable','off');
+%         set(abr_FIG.push.peaks,'Enable','off');
         folders = dir;
         for num = 1:length(folders)
             FolderofInterest{folderNum} = folders(num).name;
@@ -195,42 +200,42 @@ cd(dataFolderpath)
 % Determine which freqs are present in the data
 % If freq is present, it is added to freqUsed
 freqUsed = [];
-TEMPdir=dir('*ABR_click.m');
+TEMPdir=dir('*ABR_click.mat');
 if ~isempty(TEMPdir)
     freqUsed(end + 1) = NaN;
     set(abr_FIG.push.freqClick,'Enable','on');
 else
     set(abr_FIG.push.freqClick,'Enable','off');
 end
-TEMPdir=dir('*ABR_500.m');
+TEMPdir=dir('*ABR_500.mat');
 if ~isempty(TEMPdir)
     freqUsed(end + 1) = 500;
     set(abr_FIG.push.freq500,'Enable','on');
 else
     set(abr_FIG.push.freq500,'Enable','off');
 end
-TEMPdir=dir('*ABR_1000.m');
+TEMPdir=dir('*ABR_1000.mat');
 if ~isempty(TEMPdir)
     freqUsed(end + 1) = 1000;
     set(abr_FIG.push.freq1k,'Enable','on');
 else
     set(abr_FIG.push.freq1k,'Enable','off');
 end
-TEMPdir=dir('*ABR_2000.m');
+TEMPdir=dir('*ABR_2000.mat');
 if ~isempty(TEMPdir)
     freqUsed(end + 1) = 2000;
     set(abr_FIG.push.freq2k,'Enable','on');
 else
     set(abr_FIG.push.freq2k,'Enable','off');
 end
-TEMPdir=dir('*ABR_4000.m');
+TEMPdir=dir('*ABR_4000.mat');
 if ~isempty(TEMPdir)
     freqUsed(end + 1) = 4000;
     set(abr_FIG.push.freq4k,'Enable','on');
 else
     set(abr_FIG.push.freq4k,'Enable','off');
 end
-TEMPdir=dir('*ABR_8000.m');
+TEMPdir=dir('*ABR_8000.mat');
 if ~isempty(TEMPdir)
     freqUsed(end + 1) = 8000;
     set(abr_FIG.push.freq8k,'Enable','on');
@@ -242,13 +247,14 @@ end
 % araw files exist if AR has already been performed - don't perform AR again
 % No araw files exist if AR - perform AR for ALL files
 
-TEMPdir=dir('araw*');
-a_files_all = dir('a*'); %should we check for mat files here?
+TEMPdir=dir('*_AR*');
+a_files_all = dir('a*.mat'); %should we check for mat files here?
 if isempty(TEMPdir)
     %If AR_marker exists, user set that AR does not need to be performed
     %Load in first a file to check for AR_marker
-    run(a_files_all(1).name);
-    x = ans;
+    load(a_files_all(1).name);
+%     load(a_files_all(1.name);
+%     x = ans;
     %AR_marker = x.AR_marker;
     %If AR_marker does not exist, call artifact rejection
     %if ~exist('AR_marker','var')

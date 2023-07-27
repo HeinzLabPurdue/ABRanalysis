@@ -1,33 +1,31 @@
 function abr_setup
-% Follow instructions in Readme.txt if having trouble setting up
 
-global abr_root_dir abr_data_dir abr_out_dir
-if (ismac == 1) %Use if using a MAC
-    addpath(genpath('/Users/jimmys_macbook/Desktop/stuff/files/ABR Test/')) %ENTER the path of the directory containing your 'ABRAnalysis' folder
-    addpath(genpath('/Volumes/Heinz-Lab/Users/Jim/')) %ENTER the path of the directory containing your project folder
-    code_DIR='/Users/jimmys_macbook/Desktop/stuff/files/ABR Test/ABRanalysis/'; %ENTER the path of your 'ABRAnalysis' folder
-    project_DIR='/Volumes/Heinz-Lab/Users/Jim/ABR_Test/'; %ENTER the path of your project folder
+global abr_root_dir abr_data_dir abr_out_dir 
 
-    abr_root_dir = [code_DIR 'ABR-master/Matlab_ABR/'];
-    abr_data_dir = [project_DIR 'Data/'];
-    abr_out_dir = [project_DIR 'Analysis/ABR/'];
+addpath(genpath(pwd)) %ENTER the path of the directory containing your 'ABRAnalysis' folder
+rmpath(genpath('Trash'));
 
-    addpath([abr_root_dir 'ABR_analysis/'])
-    cd([abr_root_dir 'ABR_analysis/'])
-else %Use if using Windows/Linux
-    addpath(genpath('Add code directory')) %ENTER the path of the directory containing your 'ABRAnalysis' folder
-    addpath(genpath('Add project directory')) %ENTER the path of the directory containing your project folder
-    code_DIR='Add code directory'; %ENTER the path of your 'ABRAnalysis' folder
-    project_DIR='Add project directory'; %ENTER the path of your project folder
+%linux
+addpath(genpath('/media/sivaprakasaman/AndrewNVME/Pitch_Study/Pitch_Diagnostics_SH_AS/ABR/Chin/')) %ENTER the path of the directory containing your project folder
+project_DIR='/media/sivaprakasaman/AndrewNVME/Pitch_Study/Pitch_Diagnostics_SH_AS/ABR/Chin/Baseline/'; %ENTER the path of your project folder
 
-    abr_root_dir = [code_DIR 'ABR-master\Matlab_ABR\'];
-    
-    abr_data_dir = [project_DIR 'Data\'];
-    abr_out_dir = [project_DIR 'Analysis\ABR\'];
-    
-    addpath([abr_root_dir 'ABR_analysis\'])
-    cd([abr_root_dir 'ABR_analysis\'])
+% %windows
+% addpath(genpath('A:/Pitch_Study/Pitch_Diagnostics_SH_AS/ABR/Chin/')) %ENTER the path of the directory containing your project folder
+% project_DIR='A:/Pitch_Study/Pitch_Diagnostics_SH_AS/ABR/Chin/Baseline/'; %ENTER the path of your project folder
+
+% code_DIR=[pwd,'/']; %ENTER the path of your 'ABRAnalysis' folder
+code_DIR = pwd;
+abr_root_dir = [code_DIR];
+abr_data_dir = [project_DIR];
+abr_out_dir = [project_DIR 'Analysis'];
+
+addpath([abr_root_dir])
+
+if ~exist(abr_out_dir,'dir')
+    mkdir(abr_out_dir);
 end
+
+% cd([abr_root_dir 'ABR_analysis/'])
 
 abr_analysis_HL
 

@@ -1,17 +1,23 @@
 function refdata
 
-global abr_out_dir freq reff
+global abr_FIG abr_out_dir freq reff
 
-d=dir([abr_out_dir 'Q365\pre\1weekPreTTS\']);
-d = d(find(strncmp('.',{d.name},1)==0)); % Only files which are not '.' nor '..'
-str = {d.name};
-[selection ok] = listdlg('Name', 'File Manager', ...
-    'PromptString',   'Select a reference dataset',...
-    'SelectionMode',  'single',...
-    'ListSize',       [300,300], ...
-    'InitialValue',    1, ...
-    'ListString',      str);
-drawnow;
+try
+    d=dir([abr_out_dir 'Q365\pre\1weekPreTTS\']);
+    d = d(find(strncmp('.',{d.name},1)==0)); % Only files which are not '.' nor '..'
+    str = {d.name};
+    [selection ok] = listdlg('Name', 'File Manager', ...
+        'PromptString',   'Select a reference dataset',...
+        'SelectionMode',  'single',...
+        'ListSize',       [300,300], ...
+        'InitialValue',    1, ...
+        'ListString',      str);
+    drawnow;
+catch 
+    msgbox('Reference data does not exist');
+    set(abr_FIG.push.refdata,'enable','off'); 
+    return;
+end 
 
 if (ok==0 | isempty(selection))
 else
@@ -31,6 +37,7 @@ else
 		
 	else
 		msgbox('Reference data does not exist')
-	end;
+        set(abr_FIG.push.refdata,'enable','off');
+    end
 	
-end;
+end

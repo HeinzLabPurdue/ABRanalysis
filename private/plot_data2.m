@@ -75,6 +75,11 @@
             find_spl = find(round_spl <= 60);
             include_spl = spl(find_spl);
             include_zscore = data.z.score(find_spl);
+            sizeW = size(w);
+            sizeFindSPL = size(find_spl);
+            if sizeW(2) < sizeFindSPL(2)
+                w = [w, zeros(1, length(find_spl) - length(w))];
+            end
             include_w = w(find_spl);
         end
 
@@ -85,8 +90,13 @@
     %         'FontSize',10,'Color','r','horizontalalignment','left','VerticalAlignment','bottom')
         %set(han.z_panel,'Box','on','XLim',[min(include_spl)-10 max(include_spl)+10],'YLim',[0 max(include_zscore)*1.1],...
          %   'XTickLabel',[],'XGrid','on','YGrid','on','NextPlot','Add');
-         set(han.z_panel,'Box','on','XLim',xlimits,'YLim',[0 max(include_zscore)*1.1],...
+         if (0 > max(include_zscore))
+             set(han.z_panel,'Box','on','XLim',xlimits,'YLim',[max(include_zscore)*1.1 0],...
             'XGrid','on','YGrid','on','NextPlot','Add');
+         else
+            set(han.z_panel,'Box','on','XLim',xlimits,'YLim',[0 max(include_zscore)*1.1],...
+            'XGrid','on','YGrid','on','NextPlot','Add');
+         end
         text(min(include_spl)-10,max(include_zscore),[' \theta      ' num2str(data.threshold,'%10.1f') ' dB SPL'],...
             'FontSize',10,'Color','r','horizontalalignment','left','VerticalAlignment','bottom')
         %for i=1:num

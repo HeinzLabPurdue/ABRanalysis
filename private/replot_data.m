@@ -4,22 +4,16 @@ global 	abr_out_dir freq replot animal abr_Stimuli
 
 
 q_fldr = strcat('Q', num2str(animal));
-if strcmp('pre',regexp(abr_Stimuli.dir,'pre','match')) == 1
-    type = 'pre';
-elseif strcmp('post',regexp(abr_Stimuli.dir,'post','match')) == 1
-    type = 'post';
-end
-ChinDir = strcat(abr_out_dir, q_fldr, filesep, type, filesep);
+% if strcmp('pre',regexp(abr_Stimuli.dir,'pre','match')) == 1
+%     type = 'pre';
+% elseif strcmp('post',regexp(abr_Stimuli.dir,'post','match')) == 1
+%     type = 'post';
+% end
+ChinDir = [abr_out_dir,'/', q_fldr];
 
 cd(ChinDir)
- 
-x = dir;
-for i = 1:length(x)
-    if (~contains(x(i).name,'.'))&&(~contains(x(i).name,'.DS_Store','IgnoreCase',true))
-        fldr = x(i).name;
-    end
-end
-d = dir(fullfile(strcat(ChinDir, fldr), '*.mat'));
+
+d = dir(fullfile(ChinDir, '*.mat'));
 d = d(find((strncmp('.',{d.name},1)==0))); % Only files which are not '.' nor '..'
 str = {d.name};
 [selection ok] = listdlg('Name', 'File Manager', ...
@@ -33,7 +27,7 @@ drawnow;
 if (ok==0 | isempty(selection))
 else
 	replotfile=str{selection};
-	replot = load([strcat(ChinDir, fldr, filesep, replotfile)], 'abrs');
+	replot = load([strcat(ChinDir, filesep, replotfile)], 'abrs');
 	
 	if ismember(freq,replot.abrs.thresholds(:,1))
  		replot.abrs.thresholds(replot.abrs.thresholds(:,1)~=freq,:)=[];    

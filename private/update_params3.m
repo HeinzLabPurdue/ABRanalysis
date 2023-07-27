@@ -2,7 +2,7 @@ function update_params3
 
 global abr_Stimuli abr_root_dir
 
-filename = fullfile(abr_root_dir,'ABR_analysis','private','get_analysis_ins3.m');
+filename = fullfile(abr_root_dir,'private','get_analysis_ins3.m');
 fid = fopen(filename,'wt+');
 
 fprintf(fid,'%s\n\n','%ABR Analysis Instruction Block');

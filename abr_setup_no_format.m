@@ -1,36 +1,30 @@
 function abr_setup_no_format
-% Follow instructions in Readme.txt if having trouble setting up
-% Use this setup if you do not have a correctly formatted project folder
+%This will be the only setup folder...no worrying about format. Should only
+%need your ABR data directory
 
-global abr_root_dir abr_data_dir abr_out_dir
-if (ismac == 1) %Use if using a MAC
-    addpath(genpath('Add code directory')) %ENTER the path of the directory containing your 'ABRAnalysis' folder
-    addpath(genpath('Add data directory')) %ENTER the path of the data directory
-    addpath(genpath('Add output directory')) %ENTER the path of the output directory
-    code_DIR='Add code directory'; %ENTER the path of your 'ABRAnalysis' folder
+global abr_root_dir abr_data_dir abr_out_dir 
 
-    abr_root_dir = [code_DIR 'ABR-master/Matlab_ABR/'];
-    abr_data_dir = 'Add data folders path'; %ENTER the path containing your Data folders 
-    abr_out_dir = 'Add output path'; %ENTER the path of your output directory
+%addpath(genpath(pwd)) 
+%rmpath(genpath('Trash'));
 
-    addpath([abr_root_dir 'ABR_analysis/'])
-    cd([abr_root_dir 'ABR_analysis/'])
-    
-    
-else %Use if using Windows/Linux
-    addpath(genpath('Add code directory')) %ENTER the path of the directory containing your 'ABRAnalysis' folder
-    addpath(genpath('Add project directory')) %ENTER the path of the directory containing your project folder
-    code_DIR='Add code directory'; %ENTER the path of your 'ABRAnalysis' folder
-    project_DIR='Add project directory'; %ENTER the path of your project folder
+% Directory containing your data folder
+uiwait(warndlg('Please, select folder containing data to analyze','Select Data Folder'));
+abr_data_dir = uigetdir;
+addpath(genpath(abr_data_dir)) % directory containing your project folder
+uiwait(warndlg('Please, select folder to save files','Select Saving Folder'));
+abr_out_dir = uigetdir;% directory containing ABR Analysis folder
+abr_out_dir = [abr_out_dir '/Analysis'];
+uiwait(warndlg('Please, select folder containing ABR analysis scripts','Select ABR Analysis Folder'));
+abr_root_dir = uigetdir;
+abr_root_dir = [abr_root_dir,'/']; %ENTER the path of your 'ABRAnalysis' folder
 
-    abr_root_dir = [code_DIR 'ABR-master\Matlab_ABR\'];
-    
-    abr_data_dir = [project_DIR 'Data\'];
-    abr_out_dir = [project_DIR 'Analysis\ABR\'];
-    
-    addpath([abr_root_dir 'ABR_analysis\'])
-    cd([abr_root_dir 'ABR_analysis\'])
+addpath([abr_root_dir])
+
+if ~exist(abr_out_dir,'dir')
+    mkdir(abr_out_dir);
 end
+
+% cd([abr_root_dir 'ABR_analysis/'])
 
 abr_analysis_HL
 

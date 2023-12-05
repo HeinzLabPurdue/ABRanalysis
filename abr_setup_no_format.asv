@@ -1,0 +1,33 @@
+function abr_setup_no_format
+%This will be the only setup folder...no worrying about format. Should only
+%need your ABR data directory
+
+global abr_root_dir abr_data_dir abr_out_dir 
+
+%addpath(genpath(pwd)) 
+%rmpath(genpath('Trash'));
+
+% Directory containing your data folder
+warndlg('Please, select folder containing data to analyze','Select Data Folder');
+data_folder = uigetdir;
+addpath(genpath(data_folder)) % directory containing your project folder
+warndlg('Please, select folder to save files','Select Saving Folder');
+projec_DIR = uigetdir;% directory containing ABR Analysis folder
+
+
+code_DIR=[pwd,'/']; %ENTER the path of your 'ABRAnalysis' folder
+
+abr_root_dir = [code_DIR];
+abr_data_dir = [project_DIR];
+abr_out_dir = [project_DIR '/Analysis'];
+
+addpath([abr_root_dir])
+
+if ~exist(abr_out_dir,'dir')
+    mkdir(abr_out_dir);
+end
+
+% cd([abr_root_dir 'ABR_analysis/'])
+
+abr_analysis_HL
+

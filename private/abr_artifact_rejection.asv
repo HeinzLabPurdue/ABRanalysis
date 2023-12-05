@@ -33,15 +33,15 @@ warning('off');
 %just want to look at a data dir to try code for now
 %cd Y:\Users\Hannah\ARO_2018_MEMR_TTS\Data\Q350\ABR\pre\1weekPreTTS\MH-2018_08_29-Q350_preTTS
 
-a_files_all = dir('a*');
-k = 1;
-%Is this necessary to check for mat files???
-for i = 1:length(a_files_all)
-    if ~contains(a_files_all(i).name,'.mat')
-        a_files(k) = a_files_all(i);
-        k = k+1;
-    end
-end
+a_files = {dir('a*_ABR_*.mat').name};
+% k = 1;
+% %Is this necessary to check for mat files???
+% for i = 1:length(a_files_all)
+%     if contains(a_files_all(i).name,'.mat')
+%         a_files(k) = a_files_all(i);
+%         k = k+1;
+%     end
+% end
 
 %Set freqs
 freq = freqUsed;
@@ -62,13 +62,23 @@ r = ones(1,len_freq); %counter for rows for different freq
 
 %Begin looping through a files, filling in data and atten arrays accordingly
 for k = 1:length(a_files)
-    run(a_files(k).name);
-    x = ans;   
+%     run(a_files(k).name);
+%     x = ans;   
+    
+    load(a_files{k});
+    
     %If freq is click...
     if x.Stimuli.clickYes == 1
         f = 1; %col 1 is click
         %Assign to data
         waves{r(1),f} = x.AD_Data.AD_Avg_V;
+        %Test if format is old or new
+        if (isa(x.AD_Data.AD_Avg_V, 'double') == 0)
+            waves{r(1),f} = x.AD_Data.AD_Avg_V{1};
+            if (isa(x.AD_Data.AD_Avg_V{1}, 'double') == 0)
+                waves{r(1),f} = x.AD_Data.AD_Avg_V{1}{1};
+            end
+        end
         %Assign to atten
         atten(r(1),f) = round(x.Stimuli.MaxdBSPLCalib - x.Stimuli.atten_dB);
         %Increase counter
@@ -79,6 +89,12 @@ for k = 1:length(a_files)
         f = find(fr == freq);
         %Assign to data
         waves{r(f),f} = x.AD_Data.AD_Avg_V;
+        if (isa(x.AD_Data.AD_Avg_V, 'double') == 0)
+            waves{r(f),f} = x.AD_Data.AD_Avg_V{1};
+            if (isa(x.AD_Data.AD_Avg_V{1}, 'double') == 0)
+                waves{r(f),f} = x.AD_Data.AD_Avg_V{1}{1};
+            end
+        end
         %Assign to atten
         atten(r(f),f) = round(x.Stimuli.MaxdBSPLCalib - x.Stimuli.atten_dB);
         if atten(r(f),f) < 0
@@ -168,39 +184,28 @@ if strcmp(continueButton,'Yes')
     %counter for negative levels in following for loop
     count = 1;
     
+    if ~exist('RAW','dir')
+        mkdir('RAW');
+    end
+    
     %Save a file data into new araw file - first part of for loop
     %Save ac_data into original a file - second part of for loop
     for aNum = 1:length(a_files)
-        run(a_files(aNum).name);
+%         run(a_files(aNum).name);
+        load(a_files{aNum});
+        
+        ans = x;
+        
         x_araw = ans; 
         yyy = ans; %had this as x
-        aname = a_files(aNum).name;
-        arawname = strcat('araw',aname(2:end));
-        fname_araw = arawname;
         
-        %Save new file called arawname with x_araw
-        %Copied below from gain_20000 code -- MAKE THIS INTO A FUNCTION????
-        [dummy1 dummy2 ext] = fileparts(fname_araw);
-        if (strcmp(ext,'.m') ~= 1)
-            fname = [fname_araw '.m'];
-        end
-        fid = fopen(fname_araw,'wt+');
-        if (fid < 0)
-            rc = -1;
-            return;
-        end      
-        [dirname filename] = fileparts(fname_araw);
-        fprintf(fid,'function x = %s\n', filename);
-        here1 = pwd;
-            
-       %Need to go into analysis folder to access mat2text
-       cd(abr_out_dir);
-       mat2text(x_araw,fid);
-       fclose('all');
-            
-       %Go back to directory of a files
-       cd(here1);
-       %Now araw file has been saved into folder
+        
+        aname = a_files{aNum};
+        movefile(aname,'RAW');
+
+        %AS changing this to append AR instead of overwriting files...
+        [~,nm,ext] = fileparts(aname);
+        ar_filename = [nm,'_AR.mat'];
        
        %Save ac_data into a file
        %If freq is click...
@@ -214,35 +219,19 @@ if strcmp(continueButton,'Yes')
        level = round(yyy.Stimuli.MaxdBSPLCalib - yyy.Stimuli.atten_dB);
        if level < 0
            level = -1; %to match convention from earlier
-           r = find(level == new_atten(:,f)); %row index in atten for current freq
-           yyy.AD_Data.AD_Avg_V = ac_data{r(count),f};
+           %JB commented these two lines out 7/25, not sure what they are 
+           %supposed to do but they were causing crashes
+           %r = find(level == new_atten(:,f)); %row index in atten for current freq
+           %yyy.AD_Data.AD_Avg_V = ac_data{r(count),f};
            count = count + 1; %increases counter
        else
            r = find(level == new_atten(:,f)); %row index in atten for current freq
            yyy.AD_Data.AD_Avg_V = ac_data{r(1),f};
        end
-       
-       %Save new file called aname with x.AD_Data.AD_Avg_V corrected
-       %Copied below from gain_20000 code -- MAKE THIS INTO A FUNCTION????
-       [dummy1 dummy2 ext] = fileparts(aname);
-       if (strcmp(ext,'.m') ~= 1)
-           fname = [aname '.m'];
-       end
-       fid = fopen(aname,'wt+');
-       if (fid < 0)
-           rc = -1;
-           return;
-       end
-       [dirname filename] = fileparts(aname);
-       fprintf(fid,'function x = %s\n', filename);
-       here1 = pwd;
-       
-       %Need to go into analysis folder to access mat2text
-       cd(abr_out_dir);
-       mat2text(yyy,fid);
-       fclose('all');
-       %Go back to directory of a files
-       cd(here1);
+
+       x = yyy;
+       save(ar_filename,'x');
+
     end
        
     %Demeaning
@@ -261,35 +250,43 @@ elseif strcmp(continueButton,'No') %functional
         %Save AR_marker into struct of each a file
         for aNum = 1:length(a_files)
             %Load in each a file
-            run(a_files(aNum).name);
-            x_new = ans; 
+%             run(a_files(aNum).name);
+%             x_new = ans; 
+            
+            load(a_files{aNum});
+            x_new = x;
+            
+            
             %Add in AR_marker to struct
             x_new.AR_marker = 1;
             %Resave a file (w/AR_marker) over current a file
-            fname = a_files(aNum).name;
+            fname = a_files{aNum};
 
             %Copied below from gain_20000 code
-            [dummy1 dummy2 ext] = fileparts(fname);
-            if (strcmp(ext,'.m') ~= 1)
-                fname = [fname '.m'];
-            end
-            fid = fopen(fname,'wt+');
-            if (fid < 0)
-                rc = -1;
-                return;
-            end      
-            [dirname filename] = fileparts(fname);
-            fprintf(fid,'function x = %s\n', filename);
-            %here1 = strcat(pwd,filesep,fname);
-            here1 = pwd;
+            %What the hell is this doing and why??? AS COME BACK TO LATER 
+            
+%             [dummy1 dummy2 ext] = fileparts(fname);
+%             if (strcmp(ext,'.m') ~= 1)
+%                 fname = [fname '.m'];
+%             end
+%             fid = fopen(fname,'wt+');
+%             if (fid < 0)
+%                 rc = -1;
+%                 return;
+%             end      
+%             [dirname filename] = fileparts(fname);
+%             fprintf(fid,'function x = %s\n', filename);
+%             %here1 = strcat(pwd,filesep,fname);
+%             here1 = pwd;
             
             %Need to go into analysis folder to access mat2text
-            cd(abr_out_dir);
-            mat2text(x_new,fid);
-            fclose('all');
+%             cd(abr_out_dir);
+            %AS Commented out
+% %             mat2text(x_new,fid);
+%             fclose('all');
             
-            %Go back to directory of a files
-            cd(here1);
+%             %Go back to directory of a files
+%             cd(here1);
         end
       
       %FIRST GO-AROUND - data currently being processed

@@ -20,7 +20,8 @@ if ~isempty(data)
             if strcmp(ButtonName,'Yes')
                 save_file2_HG;
             elseif strcmp(ButtonName,'Cancel')
-                return
+                return;
+                replot_check = 3;
             end
         else
             data.save_chk = 0;
@@ -31,48 +32,22 @@ if ~isempty(data)
             if strcmp(ButtonName,'Yes')
                 save_file2_HG;
             elseif strcmp(ButtonName,'Cancel')
-                return
+                return;
             end
         end
     end
 end
-
-%{
-if ~isempty(data)
-    if isfield(data,'x')
-        if sum(sum(~isnan(data.x)))
-            ButtonName=questdlg('Would you like to save?');
-            if strcmp(ButtonName,'Yes')
-                save_file2_HG;
-            elseif strcmp(ButtonName,'Cancel')
-                return
-            end
-        end
-    end
-end
-%}
-
-%HG Added 10/21/19
-% Qanimal = strcat('Q',num2str(animal));
-% if hearingStatus == 'NH'
-%     condFolder = 'pre';
-% elseif hearingStatus = 'HI'
-%     condFolder = 'post';
-% end
-
-
-%ExpDir=fullfile(abr_data_dir,Qanimal,'ABR',condFolder,abr_Stimuli.dir); %%%THIS
 ExpDir = dataFolderpath;
 cd(ExpDir);
 if freq_val_kHz~=0
-    allfiles=dir(['a*ABR*' num2str(round(freq_val_kHz*1e3)) '*']);
+    allfiles=dir(['a*ABR*' num2str(round(freq_val_kHz*1e3)) '*.mat']);
     if isempty(allfiles)
-        allfiles=dir(['p*ABR*' num2str(round(freq_val_kHz*1e3)) '*']);
+        allfiles=dir(['p*ABR*' num2str(round(freq_val_kHz*1e3)) '*.mat']);
     end
 elseif freq_val_kHz==0
-    allfiles=dir('a*ABR*click*');
+    allfiles=dir('a*ABR*click*.mat');
     if isempty(allfiles)
-        allfiles=dir('p*ABR*click*');
+        allfiles=dir('p*ABR*click*.mat');
     end
 end
 
@@ -81,8 +56,9 @@ ABRpics=nan(1,length(allfiles));
 
 for i=1:length(allfiles)
     filename=allfiles(i).name;
-    eval(['run(''' filename ''');']);
-    eval('x=ans;')
+%     eval(['run(''' filename ''');']);
+%     eval('x=ans;')
+    load(filename,'x');
     if ~isfield(x.Stimuli,'MaxdBSPLCalib')
         allcalfiles=dir('p*calib*');
         calfile=allcalfiles(1).name;
@@ -100,7 +76,6 @@ new_value=MakeInputPicString(ABRpics);
 
 set(abr_FIG.parm_txt(2),'string',upper(new_value));
 abr_Stimuli.abr_pic = new_value;
-
 zzz5;
 set(han.peak_panel,'Box','on');
 set(abr_FIG.handle, 'CurrentObject', abr_FIG.push.edit);
